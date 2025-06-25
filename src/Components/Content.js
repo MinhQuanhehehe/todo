@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const Content = () => {
     return (
-        <main className='grow flex flex-col bg-gray-100 p-6 m-2'>
+        <main className='grow flex flex-col bg-gray-100 p-6'>
             <div className='flex justify-between items-center mb-4'>
                 <h1>Dash Board</h1>
             </div>

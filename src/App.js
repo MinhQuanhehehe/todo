@@ -1,12 +1,19 @@
 import React from 'react'
 import Header from './Components/Header';
+import Footer from './Components/Footer';
 import Content from './Components/Content';
 import CompletedTasks from './Components/CompletedTasks';
 import PendingTasks from './Components/PendingTask';
 import TaskList from './Components/TaskList';
 import { Route, Routes } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AddTaskForm from './Components/AddTaskForm';
+import SearchBar from './Components/SearchBar';
+import SearchedTasks from './Components/SearchedTasks';
+import ItemDetail from './Components/ItemDetail';
+import SideBar from './Components/SideBar';
+
+
 
 function App() {
   const [tasks, setTasks] = useState(JSON.parse(localStorage.getItem('tasks')) || []);
@@ -17,6 +24,7 @@ function App() {
       description: ''
     }
   );
+  const [searching, setSearching] = useState('');
   const [addTaskFormVisible, setAddTaskFormVisible] = useState(false);
   const addTask = (task) => {
     const id = tasks.length ? tasks[tasks.length - 1].id + 1 : 1;
@@ -46,7 +54,7 @@ function App() {
 
   const handleCheck = (id) => {
     const listTasks = tasks.map((task) => task.id === id ? { ...task, completed: !task.completed } : task)
-    const updateTasks = listTasks.map((task) => 
+    const updateTasks = listTasks.map((task) =>
       (task.completed ? { ...task, pending: false } : task)
     );
     saveAndSetTasks(updateTasks);
@@ -60,10 +68,16 @@ function App() {
     const listTasks = tasks.map((task) => task.id === id ? (!task.completed ? { ...task, pending: !task.pending } : task) : task);
     saveAndSetTasks(listTasks);
   }
+
+  const handleEdit = (id, newTitle, newDescription) => {
+  const newTasks = tasks.map(task =>
+    task.id === id ? { ...task, title: newTitle, description: newDescription } : task
+  );
+  saveAndSetTasks(newTasks);
+};
   return (
-    <div className=" flex min-h-screen bg-gray-100">
-      <Header />
-      <button onClick={() => (setAddTaskFormVisible(true))} className='fixed bottom-5 right-5 bg-blue-500 hover:bg-green-500 p-2 text-white rounded-md m-2'>Add</button>
+    <div className='flex flex-col justify-between h-screen'>
+      <button onClick={() => (setAddTaskFormVisible(true))} className='fixed bottom-20 right-10 bg-blue-500 hover:bg-green-500 p-9 text-white rounded-2xl m-2 shadow-md'>Add</button>
       {addTaskFormVisible && <AddTaskForm
         newTask={newTask}
         setNewTask={setNewTask}
@@ -71,33 +85,63 @@ function App() {
         setAddTaskFormVisible={setAddTaskFormVisible}
         addTask={addTask}
       />}
-      <Routes>
-        <Route path='/' element={<Content />}></Route>
-        <Route path="/tasks" element={
-          <TaskList
-            tasks={tasks}
-            handleCheck={handleCheck}
-            handleDelete={handleDelete}
-            handlePending={handlePending}
-          />}
+      <Header />
+    <div className=" flex grow bg-gray-100">
+      <SideBar />
+      <div className="flex flex-col grow">
+        <SearchBar
+          searching={searching}
+          setSearching={setSearching}
         />
-        <Route path="/completed-tasks" element={
-          <CompletedTasks
-            tasks={tasks}
-            handleCheck={handleCheck}
-            handleDelete={handleDelete}
-            handlePending={handlePending}
-          />}
-        />
-        <Route path="/pending-tasks" element={
-          <PendingTasks
-            tasks={tasks}
-            handleCheck={handleCheck}
-            handleDelete={handleDelete}
-            handlePending={handlePending}
-          />}
-        />
-      </Routes>
+        <Routes>
+          <Route path='/' element={<Content />}></Route>
+          <Route path="/itemdetail/:id" element={
+            <ItemDetail
+              handleCheck={handleCheck}
+              handleDelete={handleDelete}
+              handlePending={handlePending}
+              handleEdit={handleEdit}
+              tasks={tasks}
+            />} />
+          <Route path="/searched" element={
+            <SearchedTasks
+              searching={searching}
+              tasks={tasks}
+              handleCheck={handleCheck}
+              handleDelete={handleDelete}
+              handlePending={handlePending}
+              setSearching={setSearching}
+            />}
+          />
+          <Route path="/tasks" element={
+            <TaskList
+              tasks={tasks}
+              handleCheck={handleCheck}
+              handleDelete={handleDelete}
+              handlePending={handlePending}
+              setAddTaskFormVisible={setAddTaskFormVisible}
+            />}
+          />
+          <Route path="/completed-tasks" element={
+            <CompletedTasks
+              tasks={tasks}
+              handleCheck={handleCheck}
+              handleDelete={handleDelete}
+              handlePending={handlePending}
+            />}
+          />
+          <Route path="/pending-tasks" element={
+            <PendingTasks
+              tasks={tasks}
+              handleCheck={handleCheck}
+              handleDelete={handleDelete}
+              handlePending={handlePending}
+            />}
+          />
+        </Routes>
+      </div>
+    </div>
+    <Footer />
     </div>
   );
 }
