@@ -32,7 +32,7 @@ const Item = ({ handleCheck, handleDelete, handlePending, task }) => {
                     <button onClick={() => handlePending(task.id)} className='rounded-md bg-gray-100 text-gray-500 mr-4 p-2'>Not Yet</button>
                 )
             )}
-            <button type='submit' onClick={() => handleDelete(task.id)} className='bg-blue-500 hover:bg-red-500 p-2 text-white rounded-md'>Delete</button>
+            <button type='submit' onClick={() => handleDelete(task.id)} className='bg-[#B0D4B8] hover:bg-[#A4C3A2] text-[#5D7B6F] p-2 rounded-md'>Delete</button>
         </li>
     )
 }

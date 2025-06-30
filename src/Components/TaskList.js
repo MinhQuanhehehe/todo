@@ -5,12 +5,12 @@ import Item from './Item';
 
 const TaskList = ({ tasks, handleCheck, handleDelete, handlePending, setAddTaskFormVisible}) => {
     return (
-        <main className='grow flex flex-col bg-gray-100 p-6 h-1'>
+        <main className='grow flex flex-col bg-[#EAE7D6] p-6 h-1'>
             <div className='flex justify-between items-center mb-4'>
-                <h1>Task List</h1>
-                <Link to="/" className='bg-blue-500 hover:bg-red-500 p-2 text-white rounded-md'>Back to Dashboard</Link>
+                <h1 className='font-bold'>Task List</h1>
+                <Link to="/" className='bg-[#B0D4B8] hover:bg-[#A4C3A2] text-[#5D7B6F] p-2 text-white rounded-md'>Back to Dashboard</Link>
             </div>
-            <ul className='grow flex flex-col overflow-y-auto'>
+            <ul>
                 {tasks.map((task) => (
                     <Item 
                         key={task.id} 

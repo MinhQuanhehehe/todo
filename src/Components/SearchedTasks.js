@@ -6,10 +6,10 @@ import Item from './Item';
 
 const SearchedTasks = ({ handleCheck, handleDelete, handlePending, tasks, searching, setSearching }) => {
     return (
-        <main className='grow flex flex-col bg-gray-100 p-6'>
+        <main className='grow flex flex-col bg-[#EAE7D6] p-6'>
             <div className='flex justify-between items-center mb-4'>
                 <h1>Searched</h1>
-                <Link to="/" className='bg-blue-500 hover:bg-red-500 p-2 text-white rounded-md' >Back to Dashboard</Link>
+                <Link to="/" className='bg-[#B0D4B8] hover:bg-[#A4C3A2] text-[#5D7B6F] p-2  text-white rounded-md' >Back to Dashboard</Link>
             </div>
             {(searching) ? (
             <ul className='grow overflow-y-auto'>
