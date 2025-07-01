@@ -8,10 +8,12 @@ const ItemDetail = ({ handleCheck, handleDelete, handlePending, handleEdit, task
     const [isEditing, setIsEditing] = useState(false);
     const [editTitle, setEditTitle] = useState(task ? task.title : '');
     const [editDescription, setEditDescription] = useState(task ? task.description : '');
-    console.log('tasks in ItemDetail:', tasks);
-    console.log('current task:', task);
     if (!task) return <div className='flex flex-col shadow-md rounded-lg p-4 bg-white m-6 items-center'>
-        <div>Not Found</div>
+        <div className='flex justify-between items-center w-full pb-2 mb-2 border-b-2'>
+            <h1>Task Detail</h1>
+            <Link to="/" className='bg-[#B0D4B8] hover:bg-[#A4C3A2] text-[#5D7B6F] p-2 rounded-md'>Back to Dashboard</Link>
+        </div>
+        <div className='pt-2'>Not Found</div>
     </div>;
 
     const handleSave = () => {
@@ -23,10 +25,10 @@ const ItemDetail = ({ handleCheck, handleDelete, handlePending, handleEdit, task
         <div className='flex flex-col shadow-md rounded-lg p-4 bg-white m-6 items-center'>
             <div className='flex justify-between items-center w-full pb-2 mb-2 border-b-2'>
                 <h1>Task Detail</h1>
-                <Link to="/" className='bg-blue-500 hover:bg-red-500 p-2 text-white rounded-md'>Back to Dashboard</Link>
+                <Link to="/" className='bg-[#B0D4B8] hover:bg-[#A4C3A2] text-[#5D7B6F] p-2 rounded-md'>Back to Dashboard</Link>
             </div>
             <div className='flex w-full mx-6 items-center justify-between'>
-                <Checkbox size='large' checked={task.completed} onChange={() => handleCheck(task.id)}/>
+                <Checkbox size='large' checked={task.completed} onChange={() => handleCheck(task.id)} />
                 <div className='grow'>
                     <div className='grow mr-4'>
                         {isEditing ? (

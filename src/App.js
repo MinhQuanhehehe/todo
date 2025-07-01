@@ -48,9 +48,8 @@ function App() {
     };
     fetchData();
   }, []);
-
   const addTask = async (task) => {
-    const id = tasks.length ? tasks[tasks.length - 1].id + 1 : 1;
+    const id = String((tasks.length ? Number(tasks[tasks.length - 1].id) + 1 : 1));
     const newTaskObj = {
       id: id,
       title: task.title,
@@ -79,7 +78,7 @@ function App() {
     const task = tasks.find(task => task.id === id);
     if (!task) return;
     const completed = !task.completed;
-    const pending = completed ? false : task.pending; // completed=true thì pending=false
+    const pending = completed ? false : task.pending;
 
     await PATCH(id, { completed, pending });
 
@@ -96,7 +95,7 @@ function App() {
 
   const handlePending = async (id) => {
     const task = tasks.find(task => task.id === id);
-    if (!task || task.completed) return; // completed thì không cho pending
+    if (!task || task.completed) return;
     const pending = !task.pending;
     await PATCH(id, { pending });
     setTasks(tasks.map(t =>
@@ -128,10 +127,10 @@ function App() {
       ) : (
         <>
           <Header />
-          <div className="sm:flex grow bg-[#EAE7D6]">
+          <div className="flex flex-col sm:flex-row grow bg-[#EAE7D6]">
             <SideBar />
             <div className="flex flex-col grow">
-              <button onClick={() => (setAddTaskFormVisible(true))} className='fixed bottom-20 right-10 bg-[#8fb898] hover:bg-[#A4C3A2] text-[#5D7B6F] p-9 rounded-2xl m-2 shadow-md'>Add</button>
+              <button onClick={() => (setAddTaskFormVisible(true))} className='fixed bottom-10 right-10 bg-[#8fb898] hover:bg-[#A4C3A2] text-[#5D7B6F] p-9 rounded-2xl m-2 shadow-md'>Add</button>
               {addTaskFormVisible && <AddTaskForm
                 newTask={newTask}
                 setNewTask={setNewTask}

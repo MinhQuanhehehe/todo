@@ -1,13 +1,6 @@
 {
   "tasks": [
     {
-      "id": "1",
-      "title": "Learn React",
-      "description": "Read the React documentation and build a simple app.",
-      "completed": true,
-      "pending": false
-    },
-    {
       "id": "2",
       "title": "Write Unit Tests",
       "description": "Add unit tests for all components",
@@ -19,6 +12,13 @@
       "title": "Refactor Code",
       "description": "Clean up and optimize the codebase.",
       "completed": true,
+      "pending": false
+    },
+    {
+      "id": "4",
+      "title": "sdasd",
+      "description": "ádsadad",
+      "completed": false,
       "pending": false
     }
   ]
