@@ -17,6 +17,7 @@ import PrivateRoute from './Components/Auth/PrivateRoute';
 import PublicRoute from './Components/Auth/PublicRoute';
 import Login from './Components/Login';
 import Register from './Components/Register';
+import { toast, ToastContainer } from 'react-toastify';
 
 
 function App() {
@@ -85,7 +86,7 @@ function App() {
     const pending = completed ? false : task.pending;
 
     await PATCH(id, { completed, pending });
-
+    toast.success('Success!');
     setTasks(tasks.map(t =>
       t.id === id ? { ...t, completed, pending } : t
     ));
@@ -94,6 +95,7 @@ function App() {
   const handleDelete = async (id) => {
     const listTasks = tasks.filter((task) => task.id !== id);
     await DELETE(id);
+    toast.success('Success!');
     setTasks(listTasks);
   };
 
@@ -102,6 +104,7 @@ function App() {
     if (!task || task.completed) return;
     const pending = !task.pending;
     await PATCH(id, { pending });
+    toast.success('Success!');
     setTasks(tasks.map(t =>
       t.id === id ? { ...t, pending } : t
     ));
@@ -109,6 +112,7 @@ function App() {
 
   const handleEdit = async (id, newTitle, newDescription) => {
     await PATCH(id, { title: newTitle, description: newDescription });
+    toast.success('Success!');
     setTasks(tasks.map(task =>
       task.id === id ? { ...task, title: newTitle, description: newDescription } : task
     ));
@@ -116,6 +120,7 @@ function App() {
   return (
     <div className='flex flex-col justify-between h-screen'>
       {isAuthPage ? (
+        <>
         <Routes>
           <Route path="/login" element={
             <PublicRoute>
@@ -128,6 +133,8 @@ function App() {
             </PublicRoute>
           } />
         </Routes>
+        <ToastContainer/>
+        </>
       ) : (
         <>
           <Header />
@@ -208,6 +215,7 @@ function App() {
               </Routes>
             </div>
           </div>
+          <ToastContainer/>
         </>
       )}
     </div>

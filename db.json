@@ -2,7 +2,7 @@
   "tasks": [
     {
       "id": "2",
-      "title": "Write Unit Tests",
+      "title": "Write Tests",
       "description": "Add unit tests for all components",
       "completed": true,
       "pending": false
@@ -16,15 +16,8 @@
     },
     {
       "id": "4",
-      "title": "ssadas",
-      "description": "đâsas",
-      "completed": false,
-      "pending": false
-    },
-    {
-      "id": "5",
-      "title": "dsad",
-      "description": "sadsad",
+      "title": "ádas",
+      "description": "ádada",
       "completed": false,
       "pending": false
     }

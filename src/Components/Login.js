@@ -16,10 +16,10 @@ const Login = () => {
             const res = await loginApi(email, password);
             localStorage.setItem('token', res.data.token);
             login(res.data.token);
-            toast.success('Đăng nhập thành công!');
+            toast.success('Success!');
             navigate('/');
         } catch (err) {
-            toast.error('Đăng nhập thất bại!');
+            toast.error('Fail!');
         }
     };
 
