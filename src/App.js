@@ -36,6 +36,10 @@ function App() {
   const [fetchError, setFetchError] = useState(null);
 
   useEffect(() => {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+  }, [tasks]);
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await GET();

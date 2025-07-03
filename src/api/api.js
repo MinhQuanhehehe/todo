@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API = 'http://localhost:3002/tasks';
+const API = 'https://db-4m61.onrender.com/tasks';
 export const GET = () => axios.get(API);
 export const POST = (task) => axios.post(API, task);
 export const PATCH = (id, updatedFields) => axios.patch(`${API}/${id}`, updatedFields);
