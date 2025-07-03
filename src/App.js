@@ -1,6 +1,5 @@
 import React from 'react'
 import Header from './Components/Header';
-import Footer from './Components/Footer';
 import Content from './Components/Content';
 import CompletedTasks from './Components/CompletedTasks';
 import PendingTasks from './Components/PendingTask';
@@ -18,6 +17,7 @@ import PublicRoute from './Components/Auth/PublicRoute';
 import Login from './Components/Login';
 import Register from './Components/Register';
 import { toast, ToastContainer } from 'react-toastify';
+import Loading from './Components/Loading';
 
 
 function App() {
@@ -35,6 +35,7 @@ function App() {
   const [searching, setSearching] = useState('');
   const [addTaskFormVisible, setAddTaskFormVisible] = useState(false);
   const [fetchError, setFetchError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('tasks', JSON.stringify(tasks));
@@ -42,6 +43,7 @@ function App() {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const response = await GET();
         setTasks(response.data);
@@ -49,6 +51,8 @@ function App() {
       } catch (error) {
         console.log('Error fetching data:', error);
         setFetchError(error.message);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -62,6 +66,7 @@ function App() {
       completed: false,
       pending: false,
     }
+    toast.success('Success!');
     const response = await POST(newTaskObj);
     setTasks([...tasks, response.data]);
   }
@@ -118,107 +123,113 @@ function App() {
     ));
   };
   return (
-    <div className='flex flex-col justify-between h-screen'>
-      {isAuthPage ? (
-        <>
-        <Routes>
-          <Route path="/login" element={
-            <PublicRoute>
-              <Login />
-            </PublicRoute>
-          } />
-          <Route path="/register" element={
-            <PublicRoute>
-              <Register />
-            </PublicRoute>
-          } />
-        </Routes>
-        <ToastContainer/>
-        </>
-      ) : (
-        <>
-          <Header />
-          <div className="flex flex-col sm:flex-row grow bg-[#EAE7D6]">
-            <SideBar />
-            <div className="flex flex-col grow">
-              <button onClick={() => (setAddTaskFormVisible(true))} className='fixed bottom-10 right-10 bg-[#8fb898] hover:bg-[#A4C3A2] text-[#5D7B6F] p-9 rounded-2xl m-2 shadow-md'>Add</button>
-              {addTaskFormVisible && <AddTaskForm
-                newTask={newTask}
-                setNewTask={setNewTask}
-                handleSubmit={handleSubmit}
-                setAddTaskFormVisible={setAddTaskFormVisible}
-                addTask={addTask}
-              />}
-              <SearchBar
-                searching={searching}
-                setSearching={setSearching}
-              />
-              <Routes>
-                <Route path='/' element={
-                  <PrivateRoute>
-                    <Content />
-                  </PrivateRoute>
-                } />
-                <Route path="/itemdetail/:id" element={
-                  <PrivateRoute>
-                    <ItemDetail
-                      handleCheck={handleCheck}
-                      handleDelete={handleDelete}
-                      handlePending={handlePending}
-                      handleEdit={handleEdit}
-                      tasks={tasks}
-                    />
-                  </PrivateRoute>} />
-                <Route path="/searched" element={
-                  <PrivateRoute>
-                    <SearchedTasks
-                      searching={searching}
-                      tasks={tasks}
-                      handleCheck={handleCheck}
-                      handleDelete={handleDelete}
-                      handlePending={handlePending}
-                      setSearching={setSearching}
-                    />
-                  </PrivateRoute>}
-                />
-                <Route path="/tasks" element={
-                  <PrivateRoute>
-                    <TaskList
-                      tasks={tasks}
-                      handleCheck={handleCheck}
-                      handleDelete={handleDelete}
-                      handlePending={handlePending}
-                      setAddTaskFormVisible={setAddTaskFormVisible}
-                    />
-                  </PrivateRoute>}
-                />
-                <Route path="/completed-tasks" element={
-                  <PrivateRoute>
-                    <CompletedTasks
-                      tasks={tasks}
-                      handleCheck={handleCheck}
-                      handleDelete={handleDelete}
-                      handlePending={handlePending}
-                    />
-                  </PrivateRoute>}
-                />
-                <Route path="/pending-tasks" element={
-                  <PrivateRoute>
-                    <PendingTasks
-                      tasks={tasks}
-                      handleCheck={handleCheck}
-                      handleDelete={handleDelete}
-                      handlePending={handlePending}
-                    />
-                  </PrivateRoute>}
-                />
-              </Routes>
-            </div>
-          </div>
-          <ToastContainer/>
-        </>
+    <>
+      {loading && (
+        <Loading />
       )}
-    </div>
+      {!loading && (
+        <div className='flex flex-col justify-between h-screen'>
+          {isAuthPage ? (
+            <>
+              <Routes>
+                <Route path="/login" element={
+                  <PublicRoute>
+                    <Login />
+                  </PublicRoute>
+                } />
+                <Route path="/register" element={
+                  <PublicRoute>
+                    <Register />
+                  </PublicRoute>
+                } />
+              </Routes>
+              <ToastContainer />
+            </>
+          ) : (
+            <>
+              <Header />
+              <div className="flex flex-col sm:flex-row grow bg-[#EAE7D6]">
+                <SideBar />
+                <div className="flex flex-col grow">
+                  <button onClick={() => (setAddTaskFormVisible(true))} className='fixed bottom-10 right-10 bg-[#8fb898] hover:bg-[#A4C3A2] text-[#5D7B6F] p-9 rounded-2xl m-2 shadow-md'>Add</button>
+                  {addTaskFormVisible && <AddTaskForm
+                    newTask={newTask}
+                    setNewTask={setNewTask}
+                    handleSubmit={handleSubmit}
+                    setAddTaskFormVisible={setAddTaskFormVisible}
+                    addTask={addTask}
+                  />}
+                  <SearchBar
+                    searching={searching}
+                    setSearching={setSearching}
+                  />
+                  <Routes>
+                    <Route path='/' element={
+                      <PrivateRoute>
+                        <Content />
+                      </PrivateRoute>
+                    } />
+                    <Route path="/itemdetail/:id" element={
+                      <PrivateRoute>
+                        <ItemDetail
+                          handleCheck={handleCheck}
+                          handleDelete={handleDelete}
+                          handlePending={handlePending}
+                          handleEdit={handleEdit}
+                          tasks={tasks}
+                        />
+                      </PrivateRoute>} />
+                    <Route path="/searched" element={
+                      <PrivateRoute>
+                        <SearchedTasks
+                          searching={searching}
+                          tasks={tasks}
+                          handleCheck={handleCheck}
+                          handleDelete={handleDelete}
+                          handlePending={handlePending}
+                          setSearching={setSearching}
+                        />
+                      </PrivateRoute>}
+                    />
+                    <Route path="/tasks" element={
+                      <PrivateRoute>
+                        <TaskList
+                          tasks={tasks}
+                          handleCheck={handleCheck}
+                          handleDelete={handleDelete}
+                          handlePending={handlePending}
+                          setAddTaskFormVisible={setAddTaskFormVisible}
+                        />
+                      </PrivateRoute>}
+                    />
+                    <Route path="/completed-tasks" element={
+                      <PrivateRoute>
+                        <CompletedTasks
+                          tasks={tasks}
+                          handleCheck={handleCheck}
+                          handleDelete={handleDelete}
+                          handlePending={handlePending}
+                        />
+                      </PrivateRoute>}
+                    />
+                    <Route path="/pending-tasks" element={
+                      <PrivateRoute>
+                        <PendingTasks
+                          tasks={tasks}
+                          handleCheck={handleCheck}
+                          handleDelete={handleDelete}
+                          handlePending={handlePending}
+                        />
+                      </PrivateRoute>}
+                    />
+                  </Routes>
+                </div>
+              </div>
+              <ToastContainer />
+            </>
+          )}
+        </div>)}
+    </>
   );
 }
 

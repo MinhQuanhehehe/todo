@@ -25,7 +25,7 @@ const Register = () => {
 
   return (
     <div className='fixed flex items-center justify-center min-h-screen bg-black/20 w-full z-999'>
-            <form className='flex flex-col bg-white p-6 shadow-md rounded-lg w-1/2 h-1/2'
+            <form className='flex flex-col bg-white p-6 shadow-md rounded-lg w-1/2 h-1/2 min-w-80'
                 onSubmit={handleRegister}
             >
                 <div className='flex justify-between items-center'>
@@ -45,7 +45,7 @@ const Register = () => {
                         onChange={e => setPassword(e.target.value)}
                     />
                 </label>
-                <button type='submit' className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+                <button type='submit' className='bg-[#B0D4B8] hover:bg-[#A4C3A2] text-[#5D7B6F] font-bold py-2 px-4 rounded'
                 >Register</button>
                 <a href='/login' className='mt-2 text-gray-500'>Log In</a>
             </form>

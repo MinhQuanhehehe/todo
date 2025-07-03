@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import Checkbox from '@mui/material/Checkbox';
 
 const ItemDetail = ({ handleCheck, handleDelete, handlePending, handleEdit, tasks }) => {
     const { id } = useParams();
+    const navigate = useNavigate();
     const task = tasks.find(t => t.id === id);
     const [isEditing, setIsEditing] = useState(false);
     const [editTitle, setEditTitle] = useState(task ? task.title : '');
@@ -11,12 +12,21 @@ const ItemDetail = ({ handleCheck, handleDelete, handlePending, handleEdit, task
     if (!task) return <div className='flex flex-col shadow-md rounded-lg p-4 bg-white m-6 items-center'>
         <div className='flex justify-between items-center w-full pb-2 mb-2 border-b-2'>
             <h1>Task Detail</h1>
-            <Link to="/" className='bg-[#B0D4B8] hover:bg-[#A4C3A2] text-[#5D7B6F] p-2 rounded-md'>Back to Dashboard</Link>
+            <button
+                onClick={() => navigate(-1)}
+                className='bg-[#B0D4B8] hover:bg-[#A4C3A2] text-[#5D7B6F] p-2 rounded-md'
+            >
+                Back
+            </button>
         </div>
         <div className='pt-2'>Not Found</div>
     </div>;
 
     const handleSave = () => {
+        if (!editTitle.trim()) {
+            alert("Title không được để trống!");
+            return;
+        }
         handleEdit(task.id, editTitle, editDescription);
         setIsEditing(false);
     };
@@ -24,8 +34,13 @@ const ItemDetail = ({ handleCheck, handleDelete, handlePending, handleEdit, task
     return (
         <div className='flex flex-col shadow-md rounded-lg p-4 bg-white m-6 items-center'>
             <div className='flex justify-between items-center w-full pb-2 mb-2 border-b-2'>
-                <h1>Task Detail</h1>
-                <Link to="/" className='bg-[#B0D4B8] hover:bg-[#A4C3A2] text-[#5D7B6F] p-2 rounded-md'>Back to Dashboard</Link>
+                <h1 className='font-bold'>Task Detail</h1>
+                <button
+                    onClick={() => navigate(-1)}
+                    className='bg-[#B0D4B8] hover:bg-[#A4C3A2] text-[#5D7B6F] p-2 rounded-md'
+                >
+                    Back
+                </button>
             </div>
             <div className='flex w-full mx-6 items-center justify-between'>
                 <Checkbox size='large' checked={task.completed} onChange={() => handleCheck(task.id)} />
@@ -70,11 +85,11 @@ const ItemDetail = ({ handleCheck, handleDelete, handlePending, handleEdit, task
             <div className="flex gap-2 mt-4">
                 {isEditing ? (
                     <>
-                        <button onClick={handleSave} className="bg-green-500 text-white px-4 py-2 rounded">Save</button>
-                        <button onClick={() => setIsEditing(false)} className="bg-gray-300 px-4 py-2 rounded">Cancel</button>
+                        <button onClick={handleSave} className="bg-green-200 hover:bg-green-400 text-[#5D7B6F] px-4 py-2 rounded">Save</button>
+                        <button onClick={() => setIsEditing(false)} className="bg-gray-200 hover:bg-gray-400 px-4 py-2 rounded">Cancel</button>
                     </>
                 ) : (
-                    <button onClick={() => setIsEditing(true)} className="bg-yellow-500 text-white px-4 py-2 rounded">Edit</button>
+                    <button onClick={() => setIsEditing(true)} className="bg-[#B0D4B8] hover:bg-[#A4C3A2] text-[#5D7B6F] px-4 py-2 rounded">Edit</button>
                 )}
             </div>
         </div>

@@ -1,4 +1,4 @@
-import { FiUser, FiList, FiSettings, FiChevronUp, FiChevronDown, FiStar, FiMenu } from 'react-icons/fi';
+import { FiHome, FiList, FiSettings, FiChevronUp, FiChevronDown, FiLogOut, FiMenu, FiCheckCircle, FiBookmark, FiUser } from 'react-icons/fi';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -29,7 +29,7 @@ const SideBar = () => {
                         <button className="flex items-center w-full py-2 px-3 rounded hover:bg-gray-100 transition text-gray-700"
                             onClick={() => { navigate('/'); setDrawerOpen(false) }}
                         >
-                            <FiUser className="mr-3 w-5 h-5" />
+                            <FiHome className="mr-3 w-5 h-5" />
                             <span>Home</span>
                         </button>
                     </li>
@@ -39,6 +39,22 @@ const SideBar = () => {
                         >
                             <FiList className="mr-3 w-5 h-5" />
                             <span>Task List</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button className="flex items-center w-full py-2 px-3 rounded hover:bg-gray-100 transition text-gray-700"
+                            onClick={() => { navigate('/completed-tasks'); setDrawerOpen(false) }}
+                        >
+                            <FiCheckCircle className="mr-3 w-5 h-5" />
+                            <span>Completed Tasks</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button className="flex items-center w-full py-2 px-3 rounded hover:bg-gray-100 transition text-gray-700"
+                            onClick={() => { navigate('/pending-tasks'); setDrawerOpen(false) }}
+                        >
+                            <FiBookmark className="mr-3 w-5 h-5" />
+                            <span>In Progress Tasks</span>
                         </button>
                     </li>
                     <li>
@@ -56,7 +72,7 @@ const SideBar = () => {
                                     <button className="flex items-center w-full py-2 px-3 rounded hover:bg-gray-100 transition text-gray-700"
                                         onClick={handleLogout}
                                     >
-                                        <FiStar className="mr-3 w-5 h-5" />
+                                        <FiLogOut className="mr-3 w-5 h-5" />
                                         <span>Log Out</span>
                                     </button>
                                 </li>
