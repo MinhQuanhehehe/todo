@@ -5,7 +5,7 @@ import Checkbox from '@mui/material/Checkbox';
 const ItemDetail = ({ handleCheck, handleDelete, handlePending, handleEdit, tasks }) => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const task = tasks.find(t => t.id === id);
+    const task = tasks.find(t => t.id === Number(id));
     const [isEditing, setIsEditing] = useState(false);
     const [editTitle, setEditTitle] = useState(task ? task.title : '');
     const [editDescription, setEditDescription] = useState(task ? task.description : '');
@@ -27,6 +27,8 @@ const ItemDetail = ({ handleCheck, handleDelete, handlePending, handleEdit, task
             alert("Title không được để trống!");
             return;
         }
+        setEditDescription(editDescription.trim());
+        setEditTitle(editTitle.trim());
         handleEdit(task.id, editTitle, editDescription);
         setIsEditing(false);
     };
@@ -86,7 +88,7 @@ const ItemDetail = ({ handleCheck, handleDelete, handlePending, handleEdit, task
                 {isEditing ? (
                     <>
                         <button onClick={handleSave} className="bg-green-200 hover:bg-green-400 text-[#5D7B6F] px-4 py-2 rounded">Save</button>
-                        <button onClick={() => setIsEditing(false)} className="bg-gray-200 hover:bg-gray-400 px-4 py-2 rounded">Cancel</button>
+                        <button onClick={() => setIsEditing(false)} className="bg-[#B0D4B8] hover:bg-[#A4C3A2] text-[#5D7B6F] px-4 py-2 rounded">Cancel</button>
                     </>
                 ) : (
                     <button onClick={() => setIsEditing(true)} className="bg-[#B0D4B8] hover:bg-[#A4C3A2] text-[#5D7B6F] px-4 py-2 rounded">Edit</button>

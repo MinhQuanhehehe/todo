@@ -1,25 +1,69 @@
 {
-  "tasks": [
+  "users": [
+    {
+      "id": "1",
+      "name": "Alice",
+      "email": "alice@gmail.com",
+      "password": "pass123",
+      "tasks": [
+        {
+          "id": 101,
+          "title": "Write Unit Tests",
+          "description": "Add unit tests for all components",
+          "completed": false,
+          "pending": false
+        },
+        {
+          "id": 102,
+          "title": "Refactor Code",
+          "description": "Clean up and optimize the codebase.",
+          "completed": true,
+          "pending": false
+        }
+      ]
+    },
     {
       "id": "2",
-      "title": "Write Tests",
-      "description": "Add unit tests for all components",
-      "completed": true,
-      "pending": false
+      "name": "Bob",
+      "email": "bob@gmail.com",
+      "password": "123456",
+      "tasks": [
+        {
+          "id": 1,
+          "title": "aa",
+          "description": "aaaaa",
+          "completed": false,
+          "pending": false
+        },
+        {
+          "id": 2,
+          "title": "a",
+          "description": "a",
+          "completed": false,
+          "pending": false
+        },
+        {
+          "id": 3,
+          "title": "ádsad",
+          "description": "adsdsa",
+          "completed": false,
+          "pending": false
+        },
+        {
+          "id": 4,
+          "title": "áda",
+          "description": "dâd",
+          "completed": false,
+          "pending": false
+        }
+      ]
     },
     {
-      "id": "3",
-      "title": "Refactor Code",
-      "description": "Clean up and optimize the codebase.",
-      "completed": true,
-      "pending": false
-    },
-    {
-      "id": "4",
-      "title": "ádas",
-      "description": "ádada",
-      "completed": false,
-      "pending": false
+      "id": "9800",
+      "email": "a@a",
+      "password": "a",
+      "name": "a",
+      "tasks": []
     }
   ]
 }

@@ -20,15 +20,15 @@ const AddTaskForm = ({ newTask, setNewTask, handleSubmit, setAddTaskFormVisible,
                         Title:
                         <input type='text' className='border border-gray-300 rounded-md p-2 w-full' placeholder='Task Title'
                             required
-                            value={newTask.title}
-                            onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+                            value={(newTask.title)}
+                            onChange={(e) => setNewTask({ ...newTask, title: (e.target.value).trimStart() })}
                         />
                     </label>
                     <label className='mb-4'>
                         Description:
                         <textarea className='border border-gray-300 rounded-md p-2 w-full' placeholder='Task Description'
-                            value={newTask.description}
-                            onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+                            value={(newTask.description)}
+                            onChange={(e) => setNewTask({ ...newTask, description: (e.target.value) })}
                             rows={8}
                         ></textarea>
                     </label>

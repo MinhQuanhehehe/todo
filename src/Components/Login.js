@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { loginApi } from '../api/api';
 import { toast } from 'react-toastify';
 import { useAuth } from './Auth/AuthContext';
-import { FiSign } from 'react-icons/fi';
+import { GET } from '../api/api';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -14,13 +13,21 @@ const Login = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const res = await loginApi(email, password);
-            localStorage.setItem('token', res.data.token);
-            login(res.data.token);
-            toast.success('Success!');
-            navigate('/');
+            const res = await GET();
+            const users = res.data;
+            console.log(users);
+            const user = users.find(u => u.email === email && u.password === password);
+            if (user) {
+                localStorage.setItem('userId', user.id);
+                login(user.id);
+                toast.success('Success!');
+                navigate('/');
+            } else {
+                toast.error('Failed to login! Please check your email and password.');
+            }
         } catch (err) {
-            toast.error('Fail!');
+            toast.error('Error!');
+            console.error(err);
         }
     };
 
@@ -34,7 +41,7 @@ const Login = () => {
                 </div>
                 <label className='mb-2'>
                     Email:
-                    <input type='text' className='border border-gray-300 rounded-md p-2 w-full' placeholder='Email'
+                    <input type='email' className='border border-gray-300 rounded-md p-2 w-full' placeholder='Email'
                         required
                         value={email}
                         onChange={e => setEmail(e.target.value)}

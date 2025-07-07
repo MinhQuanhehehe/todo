@@ -11,20 +11,23 @@ import SearchBar from './Components/SearchBar';
 import SearchedTasks from './Components/SearchedTasks';
 import ItemDetail from './Components/ItemDetail';
 import SideBar from './Components/SideBar';
-import { GET, POST, PATCH, DELETE } from './api/api';
+import { GET,GET_USER, POST, PATCH, DELETE } from './api/api';
 import PrivateRoute from './Components/Auth/PrivateRoute';
 import PublicRoute from './Components/Auth/PublicRoute';
 import Login from './Components/Login';
 import Register from './Components/Register';
 import { toast, ToastContainer } from 'react-toastify';
 import Loading from './Components/Loading';
+import { useAuth } from './Components/Auth/AuthContext';
 
 
 function App() {
   const location = useLocation();
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
+  const { userId } = useAuth();
 
   const [tasks, setTasks] = useState([]);
+  const [user, setUser] = useState(null);
   const [newTask, setNewTask] = useState(
     {
       id: 0,
@@ -43,33 +46,40 @@ function App() {
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!userId) return;
       setLoading(true);
       try {
-        const response = await GET();
-        setTasks(response.data);
-        setFetchError(null)
+        const res = await GET_USER(userId);
+        setUser(res.data);
+        console.log(res.data.tasks);
+        setTasks(res.data.tasks || []);
+        setFetchError(null);
       } catch (error) {
-        console.log('Error fetching data:', error);
         setFetchError(error.message);
       } finally {
         setLoading(false);
       }
     };
     fetchData();
-  }, []);
+  }, [userId]);
   const addTask = async (task) => {
-    const id = String((tasks.length ? Number(tasks[tasks.length - 1].id) + 1 : 1));
+    if (!userId) return;
+    const res = await GET_USER(userId);
+    const user = res.data;
+    const id = user.tasks.length ? Math.max(...user.tasks.map(t => t.id)) + 1 : 1;
     const newTaskObj = {
-      id: id,
-      title: task.title,
-      description: task.description,
+      id,
+      title: task.title.trim(),
+      description: task.description.trim(),
       completed: false,
       pending: false,
-    }
+    };
+    const newTasks = [...user.tasks, newTaskObj];
+    await PATCH(userId, { tasks: newTasks });
     toast.success('Success!');
-    const response = await POST(newTaskObj);
-    setTasks([...tasks, response.data]);
-  }
+    setTasks(newTasks);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     addTask(newTask);
@@ -77,51 +87,67 @@ function App() {
       id: 0,
       title: '',
       description: ''
-    })
-  }
+    });
+  };
   // const saveAndSetTasks = (newTasks) => {
   //   setTasks(newTasks);
   //   localStorage.setItem('tasks', JSON.stringify(newTasks));
   // }
 
   const handleCheck = async (id) => {
-    const task = tasks.find(task => task.id === id);
-    if (!task) return;
-    const completed = !task.completed;
-    const pending = completed ? false : task.pending;
-
-    await PATCH(id, { completed, pending });
+    if (!userId) return;
+    const res = await GET_USER(userId);
+    const user = res.data;
+    const newTasks = user.tasks.map(task => {
+      if (task.id === id) {
+        const completed = !task.completed;
+        const pending = completed ? false : task.pending;
+        return { ...task, completed, pending };
+      }
+      return task;
+    });
+    await PATCH(userId, { tasks: newTasks });
     toast.success('Success!');
-    setTasks(tasks.map(t =>
-      t.id === id ? { ...t, completed, pending } : t
-    ));
+    setTasks(newTasks);
   };
 
   const handleDelete = async (id) => {
-    const listTasks = tasks.filter((task) => task.id !== id);
-    await DELETE(id);
+    if (!userId) return;
+    const res = await GET_USER(userId);
+    const user = res.data;
+    const newTasks = user.tasks.filter((task) => task.id !== id);
+    await PATCH(userId, { tasks: newTasks });
     toast.success('Success!');
-    setTasks(listTasks);
+    setTasks(newTasks);
   };
 
   const handlePending = async (id) => {
-    const task = tasks.find(task => task.id === id);
-    if (!task || task.completed) return;
-    const pending = !task.pending;
-    await PATCH(id, { pending });
+    if (!userId) return;
+    const res = await GET_USER(userId);
+    const user = res.data;
+    const newTasks = user.tasks.map(task => {
+      if (task.id === id && !task.completed) {
+        return { ...task, pending: !task.pending };
+      }
+      return task;
+    });
+    await PATCH(userId, { tasks: newTasks });
     toast.success('Success!');
-    setTasks(tasks.map(t =>
-      t.id === id ? { ...t, pending } : t
-    ));
+    setTasks(newTasks);
   };
 
   const handleEdit = async (id, newTitle, newDescription) => {
-    await PATCH(id, { title: newTitle, description: newDescription });
-    toast.success('Success!');
-    setTasks(tasks.map(task =>
+    if (!userId) return;
+    const res = await GET_USER(userId);
+    const user = res.data;
+    const newTasks = user.tasks.map(task =>
       task.id === id ? { ...task, title: newTitle, description: newDescription } : task
-    ));
+    );
+    await PATCH(userId, { tasks: newTasks });
+    toast.success('Success!');
+    setTasks(newTasks);
   };
+
   return (
     <>
       {loading && (
@@ -149,7 +175,7 @@ function App() {
             <>
               <Header />
               <div className="flex flex-col sm:flex-row grow bg-[#EAE7D6]">
-                <SideBar />
+                <SideBar user={user}/>
                 <div className="flex flex-col grow">
                   <button onClick={() => (setAddTaskFormVisible(true))} className='fixed bottom-10 right-10 bg-[#8fb898] hover:bg-[#A4C3A2] text-[#5D7B6F] p-9 rounded-2xl m-2 shadow-md'>Add</button>
                   {addTaskFormVisible && <AddTaskForm
