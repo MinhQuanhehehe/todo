@@ -9,9 +9,11 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
     const { login } = useAuth();
+    const [loading, setLoading] = useState(false);
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        setLoading(true);
         try {
             const res = await GET();
             const users = res.data;
@@ -28,6 +30,8 @@ const Login = () => {
         } catch (err) {
             toast.error('Error!');
             console.error(err);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -55,8 +59,8 @@ const Login = () => {
                         onChange={e => setPassword(e.target.value)}
                     />
                 </label>
-                <button type='submit' className='bg-[#B0D4B8] hover:bg-[#A4C3A2] text-[#5D7B6F] font-bold py-2 px-4 rounded'
-                >Log in</button>
+                <button type='submit' className='bg-[#B0D4B8] hover:bg-[#A4C3A2] text-[#5D7B6F] font-bold py-2 px-4 rounded' disabled={loading}
+                >{loading ? "Loading" : "Log in"}</button>
                 <a href='/register' className='mt-2 text-gray-500'>Sign Up</a>
             </form>
         </div>

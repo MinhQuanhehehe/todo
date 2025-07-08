@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom';
 import Item from './Item';
 
-const TaskList = ({ tasks, handleCheck, handleDelete, handlePending, setAddTaskFormVisible }) => {
+const TaskList = ({ tasks, handleCheck, handleDelete, handlePending, setAddTaskFormVisible, loadingCheckIds, loadingPendingIds, loadingDeleteIds }) => {
     return (
         <main className=' grow flex flex-col bg-[#EAE7D6] p-6'>
             <div className='flex justify-between items-center mb-4'>
@@ -18,6 +18,9 @@ const TaskList = ({ tasks, handleCheck, handleDelete, handlePending, setAddTaskF
                             handleCheck={handleCheck}
                             handleDelete={handleDelete}
                             handlePending={handlePending}
+                            loadingCheckId={!!loadingCheckIds[task.id]}
+                            loadingPendingId={!!loadingPendingIds[task.id]}
+                            loadingDeleteId={!!loadingDeleteIds[task.id]}
                         />
                     ))
                 ) : (

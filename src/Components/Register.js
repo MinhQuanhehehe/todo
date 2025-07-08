@@ -9,11 +9,12 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      // Kiểm tra email đã tồn tại chưa (nên fetch trước)
       const res = await GET();
       const users = res.data;
       if (users.find(u => u.email === email)) {
@@ -32,6 +33,8 @@ const Register = () => {
       navigate('/login');
     } catch (err) {
       toast.error('Failed to register! Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -57,8 +60,8 @@ const Register = () => {
             onChange={e => setPassword(e.target.value)}
           />
         </label>
-        <button type='submit' className='bg-[#B0D4B8] hover:bg-[#A4C3A2] text-[#5D7B6F] font-bold py-2 px-4 rounded'
-        >Register</button>
+        <button type='submit' className='bg-[#B0D4B8] hover:bg-[#A4C3A2] text-[#5D7B6F] font-bold py-2 px-4 rounded' disabled = {loading}
+        >{loading ? "Loading" : "Register"}</button>
         <a href='/login' className='mt-2 text-gray-500'>Log In</a>
       </form>
     </div>

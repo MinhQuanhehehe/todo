@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import Item from './Item';
 
 
-const SearchedTasks = ({ handleCheck, handleDelete, handlePending, tasks, searching, setSearching }) => {
+const SearchedTasks = ({ handleCheck, handleDelete, handlePending, tasks, searching, setSearching, loadingCheckIds, loadingPendingIds, loadingDeleteIds }) => {
     const newTasks = tasks.filter((task) => task.title.toLowerCase().includes(searching.toLowerCase()));
     return (
         <main className='grow flex flex-col bg-[#EAE7D6] p-6'>
@@ -21,6 +21,9 @@ const SearchedTasks = ({ handleCheck, handleDelete, handlePending, tasks, search
                             handleCheck={handleCheck}
                             handleDelete={handleDelete}
                             handlePending={handlePending}
+                            loadingCheckId={!!loadingCheckIds[task.id]}
+                            loadingPendingId={!!loadingPendingIds[task.id]}
+                            loadingDeleteId={!!loadingDeleteIds[task.id]}
                         />
                     ))}
                 </ul>

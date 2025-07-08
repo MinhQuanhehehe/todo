@@ -11,7 +11,7 @@ import SearchBar from './Components/SearchBar';
 import SearchedTasks from './Components/SearchedTasks';
 import ItemDetail from './Components/ItemDetail';
 import SideBar from './Components/SideBar';
-import { GET,GET_USER, POST, PATCH, DELETE } from './api/api';
+import { GET, GET_USER, POST, PATCH, DELETE } from './api/api';
 import PrivateRoute from './Components/Auth/PrivateRoute';
 import PublicRoute from './Components/Auth/PublicRoute';
 import Login from './Components/Login';
@@ -39,6 +39,10 @@ function App() {
   const [addTaskFormVisible, setAddTaskFormVisible] = useState(false);
   const [fetchError, setFetchError] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const [loadingCheckIds, setLoadingCheckIds] = useState({});
+  const [loadingPendingIds, setLoadingPendingIds] = useState({});
+  const [loadingDeleteIds, setLoadingDeleteIds] = useState({});
 
   useEffect(() => {
     localStorage.setItem('tasks', JSON.stringify(tasks));
@@ -95,45 +99,68 @@ function App() {
   // }
 
   const handleCheck = async (id) => {
-    if (!userId) return;
-    const res = await GET_USER(userId);
-    const user = res.data;
-    const newTasks = user.tasks.map(task => {
-      if (task.id === id) {
-        const completed = !task.completed;
-        const pending = completed ? false : task.pending;
-        return { ...task, completed, pending };
-      }
-      return task;
-    });
-    await PATCH(userId, { tasks: newTasks });
-    toast.success('Success!');
-    setTasks(newTasks);
+    if (!userId || loadingCheckIds[id]) return;
+    setLoadingCheckIds(prev => ({ ...prev, [id]: true }));
+    try {
+      const res = await GET_USER(userId);
+      const user = res.data;
+      const newTasks = user.tasks.map(task => {
+        if (task.id === id) {
+          const completed = !task.completed;
+          const pending = completed ? false : task.pending;
+          return { ...task, completed, pending };
+        }
+        return task;
+      });
+      await PATCH(userId, { tasks: newTasks });
+      toast.success('Success!');
+      setTasks(newTasks);
+    } catch (error) {
+      toast.error('Error!');
+    } finally {
+      setLoadingCheckIds(prev => ({ ...prev, [id]: false }));
+    }
   };
 
   const handleDelete = async (id) => {
-    if (!userId) return;
-    const res = await GET_USER(userId);
-    const user = res.data;
-    const newTasks = user.tasks.filter((task) => task.id !== id);
-    await PATCH(userId, { tasks: newTasks });
-    toast.success('Success!');
-    setTasks(newTasks);
+    if (!userId || loadingDeleteIds[id]) return;
+    setLoadingDeleteIds(prev => ({ ...prev, [id]: true }));
+
+    try {
+      const res = await GET_USER(userId);
+      const user = res.data;
+      const newTasks = user.tasks.filter((task) => task.id !== id);
+      await PATCH(userId, { tasks: newTasks });
+      toast.success('Success!');
+      setTasks(newTasks);
+    } catch (error) {
+      toast.error('Error!');
+    } finally {
+      setLoadingDeleteIds(prev => ({ ...prev, [id]: false }));
+    }
   };
 
   const handlePending = async (id) => {
-    if (!userId) return;
-    const res = await GET_USER(userId);
-    const user = res.data;
-    const newTasks = user.tasks.map(task => {
-      if (task.id === id && !task.completed) {
-        return { ...task, pending: !task.pending };
-      }
-      return task;
-    });
-    await PATCH(userId, { tasks: newTasks });
-    toast.success('Success!');
-    setTasks(newTasks);
+    if (!userId || loadingPendingIds[id]) return;
+    setLoadingPendingIds(prev => ({ ...prev, [id]: true }));
+    console.log(loadingPendingIds[id]);
+    try {
+      const res = await GET_USER(userId);
+      const user = res.data;
+      const newTasks = user.tasks.map(task => {
+        if (task.id === id && !task.completed) {
+          return { ...task, pending: !task.pending };
+        }
+        return task;
+      });
+      await PATCH(userId, { tasks: newTasks });
+      toast.success('Success!');
+      setTasks(newTasks);
+    } catch (error) {
+      toast.error('Có lỗi xảy ra!');
+    } finally {
+      setLoadingPendingIds(prev => ({ ...prev, [id]: false }));
+    }
   };
 
   const handleEdit = async (id, newTitle, newDescription) => {
@@ -175,7 +202,7 @@ function App() {
             <>
               <Header />
               <div className="flex flex-col sm:flex-row grow bg-[#EAE7D6]">
-                <SideBar user={user}/>
+                <SideBar user ={user} />
                 <div className="flex flex-col grow">
                   <button onClick={() => (setAddTaskFormVisible(true))} className='fixed bottom-10 right-10 bg-[#8fb898] hover:bg-[#A4C3A2] text-[#5D7B6F] p-9 rounded-2xl m-2 shadow-md'>Add</button>
                   {addTaskFormVisible && <AddTaskForm
@@ -203,6 +230,9 @@ function App() {
                           handlePending={handlePending}
                           handleEdit={handleEdit}
                           tasks={tasks}
+                          loadingCheckIds={loadingCheckIds}
+                          loadingPendingIds={loadingPendingIds}
+                          loadingDeleteIds={loadingDeleteIds}
                         />
                       </PrivateRoute>} />
                     <Route path="/searched" element={
@@ -214,6 +244,9 @@ function App() {
                           handleDelete={handleDelete}
                           handlePending={handlePending}
                           setSearching={setSearching}
+                          loadingCheckIds={loadingCheckIds}
+                          loadingPendingIds={loadingPendingIds}
+                          loadingDeleteIds={loadingDeleteIds}
                         />
                       </PrivateRoute>}
                     />
@@ -225,6 +258,9 @@ function App() {
                           handleDelete={handleDelete}
                           handlePending={handlePending}
                           setAddTaskFormVisible={setAddTaskFormVisible}
+                          loadingCheckIds={loadingCheckIds}
+                          loadingPendingIds={loadingPendingIds}
+                          loadingDeleteIds={loadingDeleteIds}
                         />
                       </PrivateRoute>}
                     />
@@ -235,6 +271,9 @@ function App() {
                           handleCheck={handleCheck}
                           handleDelete={handleDelete}
                           handlePending={handlePending}
+                          loadingCheckIds={loadingCheckIds}
+                          loadingPendingIds={loadingPendingIds}
+                          loadingDeleteIds={loadingDeleteIds}
                         />
                       </PrivateRoute>}
                     />
@@ -245,6 +284,9 @@ function App() {
                           handleCheck={handleCheck}
                           handleDelete={handleDelete}
                           handlePending={handlePending}
+                          loadingCheckIds={loadingCheckIds}
+                          loadingPendingIds={loadingPendingIds}
+                          loadingDeleteIds={loadingDeleteIds}
                         />
                       </PrivateRoute>}
                     />

@@ -34,7 +34,7 @@ const SideBar = ({ user }) => {
     }, []);
     const menu = (
         <div>
-            <h1 className="text-2xl font-bold text-center mt-4">Hello</h1>
+            <h1 className="text-2xl font-bold text-center mt-4">Hello {user?.name || ""}</h1>
             <div className="px-4 py-2">
                 <div className="uppercase text-xs font-semibold text-gray-400 mt-2 mb-3 tracking-wider">
                     Main Menu
@@ -107,7 +107,7 @@ const SideBar = ({ user }) => {
                 >
                     <FiMenu size={24} />
                 </button>
-                <p className='grow text-center sm:hidden font-bold'>Hello</p>
+                <p className='grow text-center sm:hidden font-bold'>Hello {user?.name || ""}</p>
             </div>
             {drawerOpen && (
                 <div className='fixed top-0 left-0 flex min-h-screen bg-black/20 w-full z-50'
