@@ -9,9 +9,9 @@ const ItemDetail = ({ handleCheck, handleDelete, handlePending, handleEdit, task
     const [isEditing, setIsEditing] = useState(false);
     const [editTitle, setEditTitle] = useState(task ? task.title : '');
     const [editDescription, setEditDescription] = useState(task ? task.description : '');
-    const loadingCheckId = !!loadingCheckIds[task.id]
-    const loadingPendingId = !!loadingPendingIds[task.id]
-    const loadingDeleteId = !!loadingDeleteIds[task.id]
+    const loadingCheckId = task ? !!loadingCheckIds[task.id] : false;
+    const loadingPendingId = task ? !!loadingPendingIds[task.id] : false;
+    const loadingDeleteId = task ? !!loadingDeleteIds[task.id] : false;
     if (!task) return <div className='flex flex-col shadow-md rounded-lg p-4 bg-white m-6 items-center'>
         <div className='flex justify-between items-center w-full pb-2 mb-2 border-b-2'>
             <h1>Task Detail</h1>
