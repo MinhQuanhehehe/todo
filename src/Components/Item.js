@@ -7,6 +7,7 @@ const Item = ({ handleCheck, handleDelete, handlePending, task, loadingCheckId, 
     const navigate = useNavigate();
     console.log(loadingPendingId)
     const handleNavigate = (e) => {
+        if (loadingCheckId || loadingPendingId || loadingDeleteId) return;
         if (
             e.target.tagName === 'BUTTON' ||
             e.target.tagName === 'INPUT'

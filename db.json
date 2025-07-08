@@ -1,69 +1,88 @@
 {
   "users": [
     {
-      "id": "1",
-      "name": "Alice",
-      "email": "alice@gmail.com",
-      "password": "pass123",
-      "tasks": [
-        {
-          "id": 101,
-          "title": "Write Unit Tests",
-          "description": "Add unit tests for all components",
-          "completed": false,
-          "pending": false
-        },
-        {
-          "id": 102,
-          "title": "Refactor Code",
-          "description": "Clean up and optimize the codebase.",
-          "completed": true,
-          "pending": false
-        }
-      ]
+      "id": "9800",
+      "email": "a@a",
+      "password": "a",
+      "name": "a",
+      "role": "admin",
+      "tasks": []
     },
     {
-      "id": "2",
-      "name": "Bob",
-      "email": "bob@gmail.com",
-      "password": "123456",
+      "id": "3060",
+      "email": "quan@quan",
+      "password": "quan",
+      "role": "user",
+      "name": "quan",
       "tasks": [
         {
           "id": 1,
-          "title": "aa",
-          "description": "aaaaa",
-          "completed": false,
+          "title": "aaa",
+          "description": "aaaa",
+          "completed": true,
           "pending": false
         },
         {
           "id": 2,
-          "title": "a",
-          "description": "a",
+          "title": "aaa",
+          "description": "aaaa",
           "completed": false,
-          "pending": false
+          "pending": true
         },
         {
           "id": 3,
-          "title": "ádsad",
-          "description": "adsdsa",
+          "title": "asds",
+          "description": "dadad",
           "completed": false,
           "pending": false
         },
         {
           "id": 4,
-          "title": "áda",
-          "description": "dâd",
+          "title": "aaaa",
+          "description": "aaaaa",
           "completed": false,
           "pending": false
         }
       ]
     },
     {
-      "id": "9800",
-      "email": "a@a",
-      "password": "a",
-      "name": "a",
-      "tasks": []
+      "id": "3061",
+      "email": "huong@huong",
+      "password": "huong",
+      "role": "user",
+      "name": "huong",
+      "tasks": [
+        {
+          "id": 1,
+          "title": "Task 1",
+          "description": "desc 1",
+          "completed": true,
+          "pending": false
+        },
+        {
+          "id": 2,
+          "title": "Task 2",
+          "description": "desc 2",
+          "completed": false,
+          "pending": true
+        }
+      ]
+    },
+    {
+      "id": "3062",
+      "email": "minh@minh",
+      "password": "minh",
+      "role": "user",
+      "name": "minh",
+      "tasks": [
+        {
+          "id": 1,
+          "title": "Hello",
+          "description": "World",
+          "completed": false,
+          "pending": false
+        }
+      ]
     }
   ]
 }

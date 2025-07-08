@@ -19,6 +19,8 @@ import Register from './Components/Register';
 import { toast, ToastContainer } from 'react-toastify';
 import Loading from './Components/Loading';
 import { useAuth } from './Components/Auth/AuthContext';
+import UserList from './Components/UserList';
+import Footer from './Components/Footer';
 
 
 function App() {
@@ -28,6 +30,7 @@ function App() {
 
   const [tasks, setTasks] = useState([]);
   const [user, setUser] = useState(null);
+  const [users, setUsers] = useState([]);
   const [newTask, setNewTask] = useState(
     {
       id: 0,
@@ -43,6 +46,7 @@ function App() {
   const [loadingCheckIds, setLoadingCheckIds] = useState({});
   const [loadingPendingIds, setLoadingPendingIds] = useState({});
   const [loadingDeleteIds, setLoadingDeleteIds] = useState({});
+  const [loadingUserIds, setLoadingUserIds] = useState({})
 
   useEffect(() => {
     localStorage.setItem('tasks', JSON.stringify(tasks));
@@ -54,8 +58,9 @@ function App() {
       setLoading(true);
       try {
         const res = await GET_USER(userId);
+        const resUsers = await GET();
+        setUsers(resUsers.data);
         setUser(res.data);
-        console.log(res.data.tasks);
         setTasks(res.data.tasks || []);
         setFetchError(null);
       } catch (error) {
@@ -66,6 +71,21 @@ function App() {
     };
     fetchData();
   }, [userId]);
+
+  const handleDeleteUser = async (id) => {
+    if (!userId || loadingCheckIds[id]) return;
+    setLoadingUserIds(prev => ({ ...prev, [id]: true }));
+    try {
+      await DELETE(id);
+      toast.success('User deleted!');
+      setUsers(prev => prev.filter(user => user.id !== id));
+    } catch (error) {
+      toast.error('Delete failed!');
+    } finally {
+      setLoadingUserIds(prev => ({ ...prev, [id]: false }));
+    }
+  }
+
   const addTask = async (task) => {
     if (!userId) return;
     const res = await GET_USER(userId);
@@ -200,100 +220,120 @@ function App() {
             </>
           ) : (
             <>
-              <Header />
-              <div className="flex flex-col sm:flex-row grow bg-[#EAE7D6]">
-                <SideBar user ={user} />
-                <div className="flex flex-col grow">
-                  <button onClick={() => (setAddTaskFormVisible(true))} className='fixed bottom-10 right-10 bg-[#8fb898] hover:bg-[#A4C3A2] text-[#5D7B6F] p-9 rounded-2xl m-2 shadow-md'>Add</button>
-                  {addTaskFormVisible && <AddTaskForm
-                    newTask={newTask}
-                    setNewTask={setNewTask}
-                    handleSubmit={handleSubmit}
-                    setAddTaskFormVisible={setAddTaskFormVisible}
-                    addTask={addTask}
-                  />}
-                  <SearchBar
-                    searching={searching}
-                    setSearching={setSearching}
-                  />
+              {user && user.role === 'admin' ? (
+                <>
+                  <Header />
                   <Routes>
                     <Route path='/' element={
                       <PrivateRoute>
-                        <Content />
-                      </PrivateRoute>
-                    } />
-                    <Route path="/itemdetail/:id" element={
-                      <PrivateRoute>
-                        <ItemDetail
-                          handleCheck={handleCheck}
-                          handleDelete={handleDelete}
-                          handlePending={handlePending}
-                          handleEdit={handleEdit}
-                          tasks={tasks}
-                          loadingCheckIds={loadingCheckIds}
-                          loadingPendingIds={loadingPendingIds}
-                          loadingDeleteIds={loadingDeleteIds}
+                        <UserList
+                          users={users.filter((u) => (u.role == 'user'))}
+                          setUsers={setUsers}
+                          loadingUserIds={loadingUserIds}
+                          handleDeleteUser={handleDeleteUser}
                         />
-                      </PrivateRoute>} />
-                    <Route path="/searched" element={
-                      <PrivateRoute>
-                        <SearchedTasks
-                          searching={searching}
-                          tasks={tasks}
-                          handleCheck={handleCheck}
-                          handleDelete={handleDelete}
-                          handlePending={handlePending}
-                          setSearching={setSearching}
-                          loadingCheckIds={loadingCheckIds}
-                          loadingPendingIds={loadingPendingIds}
-                          loadingDeleteIds={loadingDeleteIds}
-                        />
-                      </PrivateRoute>}
-                    />
-                    <Route path="/tasks" element={
-                      <PrivateRoute>
-                        <TaskList
-                          tasks={tasks}
-                          handleCheck={handleCheck}
-                          handleDelete={handleDelete}
-                          handlePending={handlePending}
-                          setAddTaskFormVisible={setAddTaskFormVisible}
-                          loadingCheckIds={loadingCheckIds}
-                          loadingPendingIds={loadingPendingIds}
-                          loadingDeleteIds={loadingDeleteIds}
-                        />
-                      </PrivateRoute>}
-                    />
-                    <Route path="/completed-tasks" element={
-                      <PrivateRoute>
-                        <CompletedTasks
-                          tasks={tasks}
-                          handleCheck={handleCheck}
-                          handleDelete={handleDelete}
-                          handlePending={handlePending}
-                          loadingCheckIds={loadingCheckIds}
-                          loadingPendingIds={loadingPendingIds}
-                          loadingDeleteIds={loadingDeleteIds}
-                        />
-                      </PrivateRoute>}
-                    />
-                    <Route path="/pending-tasks" element={
-                      <PrivateRoute>
-                        <PendingTasks
-                          tasks={tasks}
-                          handleCheck={handleCheck}
-                          handleDelete={handleDelete}
-                          handlePending={handlePending}
-                          loadingCheckIds={loadingCheckIds}
-                          loadingPendingIds={loadingPendingIds}
-                          loadingDeleteIds={loadingDeleteIds}
-                        />
-                      </PrivateRoute>}
-                    />
+                      </PrivateRoute>}>
+                    </Route>
                   </Routes>
-                </div>
-              </div>
-              <ToastContainer />
+                  <Footer users={users.filter((u) => (u.role == 'user'))} />
+                </>
+              ) : (
+                <>
+                  <Header />
+                  <div className="flex flex-col sm:flex-row grow bg-[#EAE7D6]">
+                    <SideBar user={user} />
+                    <div className="flex flex-col grow">
+                      <button onClick={() => (setAddTaskFormVisible(true))} className='fixed bottom-10 right-10 bg-[#8fb898] hover:bg-[#A4C3A2] text-[#5D7B6F] p-9 rounded-2xl m-2 shadow-md'>Add</button>
+                      {addTaskFormVisible && <AddTaskForm
+                        newTask={newTask}
+                        setNewTask={setNewTask}
+                        handleSubmit={handleSubmit}
+                        setAddTaskFormVisible={setAddTaskFormVisible}
+                        addTask={addTask}
+                      />}
+                      <SearchBar
+                        searching={searching}
+                        setSearching={setSearching}
+                      />
+                      <Routes>
+                        <Route path='/' element={
+                          <PrivateRoute>
+                            <Content />
+                          </PrivateRoute>
+                        } />
+                        <Route path="/itemdetail/:id" element={
+                          <PrivateRoute>
+                            <ItemDetail
+                              handleCheck={handleCheck}
+                              handleDelete={handleDelete}
+                              handlePending={handlePending}
+                              handleEdit={handleEdit}
+                              tasks={tasks}
+                              loadingCheckIds={loadingCheckIds}
+                              loadingPendingIds={loadingPendingIds}
+                              loadingDeleteIds={loadingDeleteIds}
+                            />
+                          </PrivateRoute>} />
+                        <Route path="/searched" element={
+                          <PrivateRoute>
+                            <SearchedTasks
+                              searching={searching}
+                              tasks={tasks}
+                              handleCheck={handleCheck}
+                              handleDelete={handleDelete}
+                              handlePending={handlePending}
+                              setSearching={setSearching}
+                              loadingCheckIds={loadingCheckIds}
+                              loadingPendingIds={loadingPendingIds}
+                              loadingDeleteIds={loadingDeleteIds}
+                            />
+                          </PrivateRoute>}
+                        />
+                        <Route path="/tasks" element={
+                          <PrivateRoute>
+                            <TaskList
+                              tasks={tasks}
+                              handleCheck={handleCheck}
+                              handleDelete={handleDelete}
+                              handlePending={handlePending}
+                              setAddTaskFormVisible={setAddTaskFormVisible}
+                              loadingCheckIds={loadingCheckIds}
+                              loadingPendingIds={loadingPendingIds}
+                              loadingDeleteIds={loadingDeleteIds}
+                            />
+                          </PrivateRoute>}
+                        />
+                        <Route path="/completed-tasks" element={
+                          <PrivateRoute>
+                            <CompletedTasks
+                              tasks={tasks}
+                              handleCheck={handleCheck}
+                              handleDelete={handleDelete}
+                              handlePending={handlePending}
+                              loadingCheckIds={loadingCheckIds}
+                              loadingPendingIds={loadingPendingIds}
+                              loadingDeleteIds={loadingDeleteIds}
+                            />
+                          </PrivateRoute>}
+                        />
+                        <Route path="/pending-tasks" element={
+                          <PrivateRoute>
+                            <PendingTasks
+                              tasks={tasks}
+                              handleCheck={handleCheck}
+                              handleDelete={handleDelete}
+                              handlePending={handlePending}
+                              loadingCheckIds={loadingCheckIds}
+                              loadingPendingIds={loadingPendingIds}
+                              loadingDeleteIds={loadingDeleteIds}
+                            />
+                          </PrivateRoute>}
+                        />
+                      </Routes>
+                    </div>
+                  </div>
+                  <ToastContainer />
+                </>)}
             </>
           )}
         </div>)}
